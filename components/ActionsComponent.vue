@@ -11,10 +11,7 @@
       <div>
         <svg class="main_icon"><use href="@/assets/icons.svg#ic_repeat" /></svg>
       </div>
-      <v-dialog
-        v-model="dialog"
-        width="500"
-      >
+      <v-dialog v-model="dialog" width="500">
         <template v-slot:activator="{ on, attrs }">
           <div role="button" class="main-button" v-bind="attrs" v-on="on">
             Nuevo usuario
@@ -25,18 +22,13 @@
             <p>Ingresa el correo del nuevo usuario</p>
           </div>
           <div class="userCard__main">
-            <v-text-field
-              v-model="email"
-              label="Correo electrónico"
-              outlined
-              clearable
-            ></v-text-field>
+            <v-text-field v-model="email" label="Correo electrónico" outlined clearable></v-text-field>
           </div>
           <div class="userCard__btn">
-            <div role="button" class="main-button" >
+            <div role="button" class="main-button" @click="cancel">
               Cancelar
             </div>
-            <div role="button" class="main-button" @click="verifyEmail()">
+            <div role="button" class="main-button" @click="verifyEmail">
               Continuar
             </div>
           </div>
@@ -47,12 +39,22 @@
 </template>
 
 <script setup>
-const dialog = false;
-let email = '';
+import { ref, onMounted } from 'vue';
+
+const dialog = ref(false);
+const email = ref('');
 
 const verifyEmail = () => {
-  console.log(email);
+  console.log(email.value);
 };
+
+const cancel = () => {
+  dialog.value = false;
+};
+
+onMounted(() => {
+  console.log('test');
+});
 </script>
 
 <style lang="scss" scoped>

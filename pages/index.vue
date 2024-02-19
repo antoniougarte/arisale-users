@@ -91,7 +91,7 @@ export default {
         },
         headers: {
           'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMDk2NjU4NSwiaWF0IjoxNzA4Mzc0NTg1LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.LqH9droiOh3JeKhF0uo-6NLPi7z-jN5hBG2HtaFg3DA',
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMDk3MTI1NSwiaWF0IjoxNzA4Mzc5MjU1LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.1OeHyCcf4ZVCYv7vPrpWjadFOJrJOc-3j3m81QdysNY',
         },
       });
 

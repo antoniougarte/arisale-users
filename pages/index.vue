@@ -25,7 +25,7 @@
             <!-- Botones de acciones -->
             <td class="buttons-table">
               <div role="button" class="main-button" @click="openModal(item)">
-                editar usuario
+                <svg class="main_icon"><use href="@/assets/icons.svg#ic_edit" /></svg>
               </div>
               <router-link :to="`/items/${item.id}`">
                 <!-- Botón de ver detalles -->
@@ -40,14 +40,14 @@
         v-model="dialog"
         width="500"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <!-- <template v-slot:activator="{ on, attrs }">
           <div role="button" class="main-button" v-bind="attrs" v-on="on">
             Nuevo usuario
           </div>
-        </template>
+        </template> -->
         <v-card class="userCard">
           <div class="userCard__title">
-    <p>Ingresa el correo del nuevo usuario: {{ userName }}</p>
+          <p>Ingresa el correo del nuevo usuario: {{ userName }}</p>
           </div>
           <div class="userCard__main">
             <v-text-field
@@ -91,7 +91,7 @@ export default {
         },
         headers: {
           'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMDk1ODAwMSwiaWF0IjoxNzA4MzY2MDAxLCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.YJneZR2Yfy__eELE0mYFa_HZANHl3V2ETI1EDgCVBbU',
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMDk2NjU4NSwiaWF0IjoxNzA4Mzc0NTg1LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.LqH9droiOh3JeKhF0uo-6NLPi7z-jN5hBG2HtaFg3DA',
         },
       });
 
@@ -221,5 +221,11 @@ export default {
     border: solid 1px #e2e1e0;
   }
 }
-
+.main_icon {
+  width: 24px;
+  height: 24px;
+  fill: white;
+  background-color: #163005;
+  border-radius: 8px;
+}
 </style>

@@ -1,12 +1,16 @@
 <template>
   <div class='actions'>
     <div class="actions__buttons">
-      <span>icon</span>
+      <svg class="main_icon"><use href="@/assets/icons.svg#ic_menu" /></svg>
       <span>Atrás</span>
     </div>
     <div class="actions__buttons">
-      <span>icon</span>
-      <span>icon</span>
+      <div>
+        <svg class="main_icon"><use href="@/assets/icons.svg#ic_lupa" /></svg>
+      </div>
+      <div>
+        <svg class="main_icon"><use href="@/assets/icons.svg#ic_repeat" /></svg>
+      </div>
       <v-dialog
         v-model="dialog"
         width="500"
@@ -32,7 +36,7 @@
             <div role="button" class="main-button" >
               Cancelar
             </div>
-            <div role="button" class="main-button" >
+            <div role="button" class="main-button" @click="verifyEmail()">
               Continuar
             </div>
           </div>
@@ -42,16 +46,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  setup() {
-    const dialog = false;
-    const email =''
-    return {
-      dialog, email
-    };
-  }
-}
+<script setup>
+const dialog = false;
+let email = '';
+
+const verifyEmail = () => {
+  console.log(email);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -89,5 +90,12 @@ export default {
   display: flex;
   justify-content: center;
   gap: 1rem;
+}
+.main_icon {
+  width: 24px;
+  height: 24px;
+  fill: white;
+  background-color: #163005;
+  border-radius: 8px;
 }
 </style>

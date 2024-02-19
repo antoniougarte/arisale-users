@@ -40,13 +40,14 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/axios',
   ],
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -63,5 +64,22 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config) {
+      const urlLoader = config.module.rules.find(rule => String(rule.test).includes('svg'));
+      urlLoader.test = /\.(png|jpe?g|gif)$/;
+      config.module.rules.push({
+          test: /\.svg$/,
+          use: [
+              {
+                  loader: 'url-loader',
+                  options: {
+                    limit: 12,
+                    encoding: false,
+                    esModule: false
+                  },
+              },
+          ],
+      })
+    }
   }
 }

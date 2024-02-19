@@ -1,7 +1,7 @@
 <template>
   <v-app >
     <NavbarComponent/>
-    <v-main>
+    <v-main class="background">
       <v-container>
         <Nuxt />
       </v-container>
@@ -60,3 +60,14 @@ export default {
   }
 }
 </script>
+<style>
+
+.background{
+  background-color: #f5f3f1;
+  padding-top: 1rem;
+}
+.container {
+  max-width: 1450px !important;
+}
+
+</style>

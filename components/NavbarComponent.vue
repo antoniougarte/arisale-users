@@ -2,7 +2,9 @@
   <div class="menu">
     <div class="menu__item menu__item__logo">
       <!-- <img class="menu-icon" src="./svg/menuDark.svg" width="30"> -->
-      <svg class="main_icon"><use href="@/assets/icons.svg#ic_menu" /></svg>
+      <div class="spriteContainer">
+        <svg class="sprite"><use href="@/assets/icons.svg#ic_menu" /></svg>
+      </div>
       <span>Administrador de usuarios</span>
     </div>
     <div class="menu__item account">
@@ -63,12 +65,13 @@ import { ref } from 'vue';
     font-size: 12px;
   }
 }
-
-.main_icon {
-  width: 24px;
-  height: 24px;
-  fill: white;
-  background-color: #163005;
+.spriteContainer {
+  padding: 5px;
+  background-color: #163005 ;
+  display: flex;
   border-radius: 8px;
+  .sprite{
+    fill: white;
+  }
 }
 </style>

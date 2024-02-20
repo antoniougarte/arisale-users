@@ -67,7 +67,11 @@ export default {
   padding-top: 1rem;
 }
 .container {
+  padding: 24px 12px 12px 12px;
   max-width: 1450px !important;
 }
-
+.sprite{
+  width: 24px;
+  height: 24px;
+}
 </style>

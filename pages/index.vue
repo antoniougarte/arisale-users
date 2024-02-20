@@ -1,6 +1,8 @@
 <template>
   <div>
-    <ActionsComponent />
+    <ActionsComponent
+      @updateTable="updateTable"
+    />
     <div class="main">
       <table class="custom-table">
         <!-- Encabezados de la tabla -->
@@ -14,7 +16,11 @@
         <tbody>
           <tr v-for="item in items" :key="item.series">
             <!-- Contenido de cada fila -->
-            <td>{{ item.initials }}</td>
+            <td>
+              <span class="initials" :style="{ 'background-color': item.color || 'transparent' }">
+                {{ item.initials }}
+              </span>
+            </td>
             <td>{{ item.firstname }} {{ item.lastname }}</td>
             <td>{{ item.role.name }}</td>
             <td>{{ item.email }}</td>
@@ -24,54 +30,80 @@
             <td>{{ item.status }}</td>
             <!-- Botones de acciones -->
             <td class="buttons-table">
-              <div role="button" class="main-button" @click="openModal(item)">
-                <svg class="main_icon"><use href="@/assets/icons.svg#ic_edit" /></svg>
+              <div role="button" @click="openModal(item)">
+                <svg class="sprite"><use href="@/assets/icons.svg#ic_edit" /></svg>
               </div>
-              <router-link :to="`/items/${item.id}`">
-                <!-- Botón de ver detalles -->
-              </router-link>
             </td>
           </tr>
         </tbody>
       </table>
+        <div class="table__footer">
+          <div class="table__footer__items table__footer__first">
+            <span>Mostrar</span>
+            <select v-model="itemsPerPage" @change="updateTable" class="table__footer__select select-table">
+              <option v-for="option in footerProps.itemsPerPageOptions" :key="option" :value="option">{{ option }}</option>
+            </select>
+            <span>registros por página</span>
+          </div>
+
+          <div class="table__footer__items">
+            <svg @click="prevPage()" class="sprite" ><use href="@/assets/icons.svg#ic_chevron_left" /></svg>
+            <span>{{ currentPage }}</span>
+            <svg @click="nextPage()" class="sprite"><use href="@/assets/icons.svg#ic_chevron_right" /></svg>
+          </div>
+
+          <div class="table__footer__items">
+            <span>Ir a la página</span>
+            <select v-model="currentPage" @change="updateTable" class="table__footer__select select-table">
+              <option
+                v-for="page in totalPages"
+                :key="page"
+                :value="page"
+              >
+                {{ page }}
+              </option>
+            </select>
+          </div>
+        </div>
     </div>
     <!-- Modal -->
-      <v-dialog
-        v-model="dialog"
-        width="500"
-      >
-        <!-- <template v-slot:activator="{ on, attrs }">
-          <div role="button" class="main-button" v-bind="attrs" v-on="on">
-            Nuevo usuario
+    <v-dialog
+      v-model="dialog"
+      width="600"
+    >
+      <v-card class="userCard">
+        <div class="userCard__title">
+          <p>Editar usuario</p>
+        </div>
+        <div class="userCard__main">
+          <span class="logoUser" :style="{ 'background-color': userName.color || 'transparent' }">
+            <p>{{ userName.initials }}</p>
+          </span>
+          <div class="userCard__inputs">
+            <v-text-field v-model="userName.firstname" class="custom-input" outlined dense disabled clearable label="Nombre(s)" />
+            <v-text-field v-model="userName.lastname" class="custom-input" outlined dense disabled clearable label="Apellidos" />
+            <v-select v-model="selectedRole" label="Rol" :items="roleOptions" item-text="name" item-value="id" outlined dense hide-details />
+            <v-switch v-model="activeUser" inset :label="`Usuario inactivo`"
+            ></v-switch>
           </div>
-        </template> -->
-        <v-card class="userCard">
-          <div class="userCard__title">
-          <p>Ingresa el correo del nuevo usuario: {{ userName }}</p>
+        </div>
+        <div class="userCard__btn">
+          <div role="button" class="btn__card btn__cardCancel" @click="dialog = false">
+            Cancelar
           </div>
-          <div class="userCard__main">
-            <v-text-field
-              v-model="email"
-              label="Correo electrónico"
-              outlined
-              clearable
-            ></v-text-field>
+          <div role="button" class=" btn__card btn__cardConfirm" @click="editUser(userName)">
+            Actualizar
           </div>
-          <div class="userCard__btn">
-            <div role="button" class="main-button" >
-              Cancelar
-            </div>
-            <div role="button" class="main-button" >
-              Continuar
-            </div>
-          </div>
-        </v-card>
-      </v-dialog>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
 import ActionsComponent from '~/components/ActionsComponent.vue';
 import { headers } from '~/utils/headersUtils.js';
+import { RoleEnum } from '~/utils/roles.ts';
+
 
 export default {
   components: { ActionsComponent },
@@ -91,25 +123,37 @@ export default {
         },
         headers: {
           'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMDk3MTI1NSwiaWF0IjoxNzA4Mzc5MjU1LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.1OeHyCcf4ZVCYv7vPrpWjadFOJrJOc-3j3m81QdysNY',
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTA1NzE0NywiaWF0IjoxNzA4NDY1MTQ3LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.zXuDKGnUxWPleZ05_IzQTc8mnwFmGJqM1jaAJX_VpXY',
         },
       });
 
-      const { items } = response.data;
-      console.log(items);
-      return { items };
+      const items = response.data.items;
+      const totalItems = response.data.totalItems
+
+      // console.log(response.data);
+      return { items, totalItems };
     } catch (error) {
       console.error('Error al obtener los datos:', error);
       return { items: [] };
     }
   },
 
-  props: ['userName'],
+  props: {
+    initialUserName: String,
+  },
   data() {
     return {
+
+      selectedRole: null,
+      roleOptions: RoleEnum.toArray(),
+      activeUser: false,
+
+      userName: '',
+      email:'',
       itemsPerPage: 10,
       currentPage: 1,
       items: [],
+      totalItems: null,
       headers: headers,
       footerProps: {
         itemsPerPageOptions: [10, 20, 30],
@@ -117,41 +161,87 @@ export default {
       dialog: false,
     };
   },
-  mounted() {
-    // console.log(`The initial count `, this.items)
-  },
   computed: {
-    paginatedItems() {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      return 3;
+    totalPages() {
+      return Math.ceil(this.totalItems / this.itemsPerPage);
     },
   },
   methods: {
     openModal(item) {
-      console.log(item);
-      this.selectedItem = item;
-      this.userName = `${item.firstname} ${item.lastname}`;
+      this.selectedRole = item.role.id;
+      this.userName = item;
+      this.activeUser = item.status==='Inactivo'?true:false;
       this.dialog = true;
     },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
+        this.updateTable()
       }
     },
-    // nextPage() {
-    //   if (this.currentPage < this.totalPages) {
-    //     this.currentPage++;
-    //   }
-    // },
-    updatePage() {
-      // No es necesario hacer nada, la asignación reactiva lo manejará
-    }
+    nextPage() {
+      if (this.currentPage < Math.ceil(this.totalItems / this.itemsPerPage)) {
+        this.currentPage++;
+        this.updateTable()
+      }
+    },
+    async updateTable() {
+      try {
+        const pageNumber = this.currentPage;
+        const pageSize = this.itemsPerPage;
+        const includeCurrentUser = false;
+        const excludeInactiveUsers = false;
+
+        const response = await this.$axios.get('https://ad.dev.arisale.com.pe/user-service/api/users', {
+          params: {
+            pageSize,
+            pageNumber,
+            includeCurrentUser,
+            excludeInactiveUsers,
+          },
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTA1NzE0NywiaWF0IjoxNzA4NDY1MTQ3LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.zXuDKGnUxWPleZ05_IzQTc8mnwFmGJqM1jaAJX_VpXY',
+          },
+        });
+
+        this.items = response.data.items;
+        this.totalItems = response.data.totalItems;
+
+        // console.log(response.data);
+      } catch (error) {
+        console.error('Error al obtener los datos:', error);
+        this.items = [];
+      }
+    },
+    async editUser(user) {
+      try {
+        const userId = user.id;
+        const editDto = {
+          roleId: this.selectedRole,
+          isActive: this.activeUser?false:true,
+        };
+
+        const response = await this.$axios.put(`https://ad.dev.arisale.com.pe/user-service/api/users/edit/${userId}`, editDto, {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTA1NzE0NywiaWF0IjoxNzA4NDY1MTQ3LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.zXuDKGnUxWPleZ05_IzQTc8mnwFmGJqM1jaAJX_VpXY',
+            'Content-Type': 'application/json',
+          },
+        });
+        // console.log(response);
+        this.dialog = false;
+        this.updateTable();
+      } catch (error) {
+        console.error('Error al editar el usuario:', error);
+      }
+    },
   }
 }
 </script>
-<style lang="scss" scoped>.main {
-  margin: 1rem 0;
+<style lang="scss" scoped>
+.main {
+  margin: 10px 0;
   background-color: white;
   border-radius: 10px;
 }
@@ -167,6 +257,10 @@ export default {
     border-top: 1px solid #e2e1e0;
     border-bottom: 1px solid #e2e1e0;
     padding: 8px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: left;
   }
 }
@@ -195,7 +289,8 @@ export default {
 
 .buttons-table {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
 }
 
 .txt-actions {
@@ -227,5 +322,81 @@ export default {
   fill: white;
   background-color: #163005;
   border-radius: 8px;
+}
+.select-table{
+  padding: 0 0.5rem;
+  text-align: center;
+}
+.initials{
+  color:white;
+  font-size: 16px;
+  border-radius: 100%;
+  font-weight: bolder;
+  padding: 5px;
+}
+.userCard{
+  padding: 2rem;
+  border-radius: 16px;
+  color: #5c5b5a;
+}
+.userCard__title{
+  text-align: center;
+  p{
+    font-size: 20px;
+    font-weight: bolder;
+    margin-bottom: 2rem;
+  }
+}
+.userCard__main{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.userCard__inputs{
+  display: flex;
+  flex-direction: column;
+  // gap: 1rem;
+}
+.custom-input{
+  font-size: 12px;
+  width: 100%;
+  min-width: 300px;
+}
+.userCard__btn{
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.btn__card{
+  height: 48px;
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 2.5rem;
+}
+.btn__cardCancel{
+  color: #5c5b5a;
+  border: solid 1px #5c5b5a;
+}
+.btn__cardConfirm{
+  color: white;
+  background-color: #163005 ;
+}
+.logoUser{
+  height: 200px;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  p{
+    font-size: 65px;
+    font-weight: bolder;
+    margin: 0;
+    color: white;
+
+  }
 }
 </style>

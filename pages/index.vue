@@ -123,7 +123,7 @@ export default {
         },
         headers: {
           'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTA1NzE0NywiaWF0IjoxNzA4NDY1MTQ3LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.zXuDKGnUxWPleZ05_IzQTc8mnwFmGJqM1jaAJX_VpXY',
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTEzOTQ1OCwiaWF0IjoxNzA4NTQ3NDU4LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.MWvwwFEDZ-3aNA7TnLnAS-UGJ-EmgUijXSm5cyaCfXA',
         },
       });
 
@@ -159,6 +159,8 @@ export default {
         itemsPerPageOptions: [10, 20, 30],
       },
       dialog: false,
+
+      token: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTEzOTQ1OCwiaWF0IjoxNzA4NTQ3NDU4LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.MWvwwFEDZ-3aNA7TnLnAS-UGJ-EmgUijXSm5cyaCfXA',
     };
   },
   computed: {
@@ -201,7 +203,7 @@ export default {
           },
           headers: {
             'accept': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTA1NzE0NywiaWF0IjoxNzA4NDY1MTQ3LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.zXuDKGnUxWPleZ05_IzQTc8mnwFmGJqM1jaAJX_VpXY',
+            'Authorization': `${this.token}`,
           },
         });
 
@@ -225,7 +227,7 @@ export default {
         const response = await this.$axios.put(`https://ad.dev.arisale.com.pe/user-service/api/users/edit/${userId}`, editDto, {
           headers: {
             'accept': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmlhZCIsImV4cCI6MTcxMTA1NzE0NywiaWF0IjoxNzA4NDY1MTQ3LCJkYXRhIjoiUytuTkZGakE0R2w0aldqbEl3eGdDQmhiWjFOdTk4T2F2aGo0R2FydFpkWFBrL2xGZFZWQXVkdk00RCtHeVBZZSJ9.zXuDKGnUxWPleZ05_IzQTc8mnwFmGJqM1jaAJX_VpXY',
+            'Authorization': `${this.token}`,
             'Content-Type': 'application/json',
           },
         });
